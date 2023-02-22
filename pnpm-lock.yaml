@@ -28,6 +28,7 @@ specifiers:
   graphql-tag: ^2.12.6
   jsdom: ^20.0.3
   next: 13.1.2
+  next-urql: ^4.0.3
   prettier: ^2.8.2
   react: 18.2.0
   react-dom: 18.2.0
@@ -48,6 +49,7 @@ dependencies:
   graphql-tag: 2.12.6_graphql@16.6.0
   jsdom: 20.0.3
   next: 13.1.2_biqbaboplfbrettd7655fr4n2y
+  next-urql: 4.0.3_react@18.2.0+urql@3.0.3
   react: 18.2.0
   react-dom: 18.2.0_react@18.2.0
   urql: 3.0.3_onqnqwb3ubg5opvemcqf7c2qhy
@@ -5106,6 +5108,17 @@ packages:
     resolution: {integrity: sha512-OWND8ei3VtNC9h7V60qff3SVobHr996CTwgxubgyQYEpg290h9J0buyECNNJexkFm5sOajh5G116RYA1c8ZMSw==}
     dev: true
 
+  /next-urql/4.0.3_react@18.2.0+urql@3.0.3:
+    resolution: {integrity: sha512-pesvwu1ZuGzMla8tPMo0V0yiV3ObDF4dbZyZLB2rZoORy+ebdWtClU/pfz1XDrPEgzyfGC3tqvbR5gH7Kt59XA==}
+    peerDependencies:
+      react: '>=16.8.0'
+      urql: ^3.0.0
+    dependencies:
+      react: 18.2.0
+      react-ssr-prepass: 1.5.0_react@18.2.0
+      urql: 3.0.3_onqnqwb3ubg5opvemcqf7c2qhy
+    dev: false
+
   /next/13.1.2_biqbaboplfbrettd7655fr4n2y:
     resolution: {integrity: sha512-Rdnnb2YH///w78FEOR/IQ6TXga+qpth4OqFSem48ng1PYYKr6XBsIk1XVaRcIGM3o6iiHnun0nJvkJHDf+ICyQ==}
     engines: {node: '>=14.6.0'}
@@ -5629,6 +5642,14 @@ packages:
   /react-refresh/0.14.0:
     resolution: {integrity: sha512-wViHqhAd8OHeLS/IRMJjTSDHF3U9eWi62F/MledQGPdJGDhodXJ9PBLNGr6WWL7qlH12Mt3TyTpbS+hGXMjCzQ==}
     engines: {node: '>=0.10.0'}
+    dev: false
+
+  /react-ssr-prepass/1.5.0_react@18.2.0:
+    resolution: {integrity: sha512-yFNHrlVEReVYKsLI5lF05tZoHveA5pGzjFbFJY/3pOqqjGOmMmqx83N4hIjN2n6E1AOa+eQEUxs3CgRnPmT0RQ==}
+    peerDependencies:
+      react: ^16.8.0 || ^17.0.0 || ^18.0.0
+    dependencies:
+      react: 18.2.0
     dev: false
 
   /react-transition-group/4.4.5_biqbaboplfbrettd7655fr4n2y:
