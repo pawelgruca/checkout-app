@@ -11,6 +11,9 @@ interface IAuthState {
   token: string;
 }
 
+const SALEOR_API_URL = process.env.NEXT_PUBLIC_SALEOR_API_URL || "";
+const SALEOR_API_TOKEN = process.env.NEXT_PUBLIC_SALEOR_API_TOKEN || "";
+
 const getExchanges = (getAuth: AuthConfig<IAuthState>["getAuth"]) => [
   dedupExchange,
   cacheExchange,
@@ -90,3 +93,7 @@ export const createClient = (url: string, getAuth: AuthConfig<IAuthState>["getAu
       fetchExchange,
     ],
   });
+
+export const saleorClient = nextClient(SALEOR_API_URL, () => {
+  return Promise.resolve({ token: SALEOR_API_TOKEN });
+});

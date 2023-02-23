@@ -9,6 +9,8 @@ import { AppProps } from "next/app";
 
 import { ThemeSynchronizer } from "../lib/theme-synchronizer";
 import { NoSSRWrapper } from "../lib/no-ssr-wrapper";
+import { Provider } from "urql";
+import { saleorClient } from "../lib/create-graphql-client";
 
 const themeOverrides: Partial<Theme> = {
   /**
@@ -43,11 +45,15 @@ function NextApp({ Component, pageProps }: AppProps) {
   return (
     <NoSSRWrapper>
       <AppBridgeProvider appBridgeInstance={appBridgeInstance}>
-        <ThemeProvider overrides={themeOverrides} ssr>
-          <ThemeSynchronizer />
-          <RoutePropagator />
-          <Component {...pageProps} />
-        </ThemeProvider>
+        {saleorClient && (
+          <Provider value={saleorClient}>
+            <ThemeProvider overrides={themeOverrides} ssr>
+              <ThemeSynchronizer />
+              <RoutePropagator />
+              <Component {...pageProps} />
+            </ThemeProvider>
+          </Provider>
+        )}
       </AppBridgeProvider>
     </NoSSRWrapper>
   );
