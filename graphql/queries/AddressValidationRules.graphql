@@ -1,7 +1,0 @@
-query AddressValidationRules($countryCode: CountryCode!) {
-  addressValidationRules(countryCode: $countryCode) {
-    requiredFields
-    countryName
-    postalCodeMatchers
-  }
-}
