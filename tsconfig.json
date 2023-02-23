@@ -19,6 +19,17 @@
       "@/*": ["./src/*"]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],
+  "ts-node": {
+    "compilerOptions": {
+      "module": "commonJs",
+      "target": "es2020"
+    }
+  },
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    "src/pages/api/server.ts",
+    "src/pages/api/server.ts"  ],
   "exclude": ["node_modules"]
 }
