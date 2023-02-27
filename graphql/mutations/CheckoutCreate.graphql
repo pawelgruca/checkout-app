@@ -1,0 +1,27 @@
+mutation CheckoutCreate($lines: [CheckoutLineInput!]!) {
+  checkoutCreate(input: { channel: "default-channel", email: "customer@example.com", lines: $lines }) {
+    checkout {
+      token
+      lines {
+        id
+        totalPrice {
+          gross {
+            currency
+            amount
+          }
+        }
+      }
+      totalPrice {
+        currency
+        gross {
+          currency
+          amount
+        }
+      }
+    }
+    errors {
+      field
+      code
+    }
+  }
+}

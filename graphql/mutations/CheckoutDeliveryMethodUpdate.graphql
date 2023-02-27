@@ -1,0 +1,14 @@
+mutation CheckoutDeliveryMethodUpdate($id: ID, $token: UUID, $deliveryMethodId: ID) {
+  checkoutDeliveryMethodUpdate(id: $id, token: $token, deliveryMethodId: $deliveryMethodId) {
+    checkout {
+      token
+      id
+      deliveryMethod {
+        __typename
+      }
+    }
+    errors {
+      message
+    }
+  }
+}

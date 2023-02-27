@@ -1,0 +1,8 @@
+query ShippingMethodsFetchAll {
+  shop {
+    availableShippingMethods(channel: "default-channel") {
+      id
+      name
+    }
+  }
+}

@@ -25119,12 +25119,312 @@ export type _Service = {
   sdl?: Maybe<Scalars['String']>;
 };
 
+export type CheckoutCompleteMutationVariables = Exact<{
+  checkoutId?: InputMaybe<Scalars['ID']>;
+}>;
+
+
+export type CheckoutCompleteMutation = { __typename?: 'Mutation', checkoutComplete?: { __typename?: 'CheckoutComplete', confirmationNeeded: boolean, confirmationData?: string | null, order?: { __typename?: 'Order', id: string, userEmail?: string | null, created: any } | null, errors: Array<{ __typename?: 'CheckoutError', field?: string | null, message?: string | null, code: CheckoutErrorCode }> } | null };
+
+export type CheckoutCreateMutationVariables = Exact<{
+  lines: Array<CheckoutLineInput> | CheckoutLineInput;
+}>;
+
+
+export type CheckoutCreateMutation = { __typename?: 'Mutation', checkoutCreate?: { __typename?: 'CheckoutCreate', checkout?: { __typename?: 'Checkout', token: any, lines: Array<{ __typename?: 'CheckoutLine', id: string, totalPrice: { __typename?: 'TaxedMoney', gross: { __typename?: 'Money', currency: string, amount: number } } }>, totalPrice: { __typename?: 'TaxedMoney', currency: string, gross: { __typename?: 'Money', currency: string, amount: number } } } | null, errors: Array<{ __typename?: 'CheckoutError', field?: string | null, code: CheckoutErrorCode }> } | null };
+
+export type CheckoutDeliveryMethodUpdateMutationVariables = Exact<{
+  id?: InputMaybe<Scalars['ID']>;
+  token?: InputMaybe<Scalars['UUID']>;
+  deliveryMethodId?: InputMaybe<Scalars['ID']>;
+}>;
+
+
+export type CheckoutDeliveryMethodUpdateMutation = { __typename?: 'Mutation', checkoutDeliveryMethodUpdate?: { __typename?: 'CheckoutDeliveryMethodUpdate', checkout?: { __typename?: 'Checkout', token: any, id: string, deliveryMethod?: { __typename: 'ShippingMethod' } | { __typename: 'Warehouse' } | null } | null, errors: Array<{ __typename?: 'CheckoutError', message?: string | null }> } | null };
+
+export type CheckoutPayemntCreateMutationVariables = Exact<{
+  checkouId?: InputMaybe<Scalars['ID']>;
+  token?: InputMaybe<Scalars['UUID']>;
+  input: PaymentInput;
+}>;
+
+
+export type CheckoutPayemntCreateMutation = { __typename?: 'Mutation', checkoutPaymentCreate?: { __typename?: 'CheckoutPaymentCreate', checkout?: { __typename?: 'Checkout', id: string } | null, payment?: { __typename?: 'Payment', creditCard?: { __typename?: 'CreditCard', brand: string } | null } | null } | null };
+
+export type CheckoutShippingAddressUpdateMutationVariables = Exact<{
+  checkoutId?: InputMaybe<Scalars['ID']>;
+  id?: InputMaybe<Scalars['ID']>;
+  shippingAddress: AddressInput;
+  token?: InputMaybe<Scalars['UUID']>;
+}>;
+
+
+export type CheckoutShippingAddressUpdateMutation = { __typename?: 'Mutation', checkoutShippingAddressUpdate?: { __typename?: 'CheckoutShippingAddressUpdate', errors: Array<{ __typename?: 'CheckoutError', message?: string | null }>, checkout?: { __typename?: 'Checkout', id: string, shippingPrice: { __typename?: 'TaxedMoney', gross: { __typename?: 'Money', currency: string, amount: number } }, shippingAddress?: { __typename?: 'Address', firstName: string, streetAddress1: string, city: string, postalCode: string, country: { __typename?: 'CountryDisplay', country: string, code: string } } | null } | null } | null };
+
 export type ProductListQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type ProductListQuery = { __typename?: 'Query', products?: { __typename?: 'ProductCountableConnection', edges: Array<{ __typename?: 'ProductCountableEdge', node: { __typename?: 'Product', id: string, name: string, description?: string | null, variants?: Array<{ __typename?: 'ProductVariant', id: string, quantityAvailable?: number | null, pricing?: { __typename?: 'VariantPricingInfo', price?: { __typename?: 'TaxedMoney', gross: { __typename?: 'Money', amount: number, currency: string } } | null } | null }> | null, thumbnail?: { __typename?: 'Image', url: string } | null } }> } | null };
 
+export type ShippingMethodsFetchAllQueryVariables = Exact<{ [key: string]: never; }>;
 
+
+export type ShippingMethodsFetchAllQuery = { __typename?: 'Query', shop: { __typename?: 'Shop', availableShippingMethods?: Array<{ __typename?: 'ShippingMethod', id: string, name: string }> | null } };
+
+
+export const CheckoutCompleteDocument = gql`
+    mutation checkoutComplete($checkoutId: ID) {
+  checkoutComplete(checkoutId: $checkoutId) {
+    order {
+      id
+      userEmail
+      created
+    }
+    confirmationNeeded
+    confirmationData
+    errors {
+      field
+      message
+      code
+    }
+  }
+}
+    `;
+export type CheckoutCompleteMutationFn = Apollo.MutationFunction<CheckoutCompleteMutation, CheckoutCompleteMutationVariables>;
+
+/**
+ * __useCheckoutCompleteMutation__
+ *
+ * To run a mutation, you first call `useCheckoutCompleteMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCheckoutCompleteMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [checkoutCompleteMutation, { data, loading, error }] = useCheckoutCompleteMutation({
+ *   variables: {
+ *      checkoutId: // value for 'checkoutId'
+ *   },
+ * });
+ */
+export function useCheckoutCompleteMutation(baseOptions?: Apollo.MutationHookOptions<CheckoutCompleteMutation, CheckoutCompleteMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CheckoutCompleteMutation, CheckoutCompleteMutationVariables>(CheckoutCompleteDocument, options);
+      }
+export type CheckoutCompleteMutationHookResult = ReturnType<typeof useCheckoutCompleteMutation>;
+export type CheckoutCompleteMutationResult = Apollo.MutationResult<CheckoutCompleteMutation>;
+export type CheckoutCompleteMutationOptions = Apollo.BaseMutationOptions<CheckoutCompleteMutation, CheckoutCompleteMutationVariables>;
+export const CheckoutCreateDocument = gql`
+    mutation CheckoutCreate($lines: [CheckoutLineInput!]!) {
+  checkoutCreate(
+    input: {channel: "default-channel", email: "customer@example.com", lines: $lines}
+  ) {
+    checkout {
+      token
+      lines {
+        id
+        totalPrice {
+          gross {
+            currency
+            amount
+          }
+        }
+      }
+      totalPrice {
+        currency
+        gross {
+          currency
+          amount
+        }
+      }
+    }
+    errors {
+      field
+      code
+    }
+  }
+}
+    `;
+export type CheckoutCreateMutationFn = Apollo.MutationFunction<CheckoutCreateMutation, CheckoutCreateMutationVariables>;
+
+/**
+ * __useCheckoutCreateMutation__
+ *
+ * To run a mutation, you first call `useCheckoutCreateMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCheckoutCreateMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [checkoutCreateMutation, { data, loading, error }] = useCheckoutCreateMutation({
+ *   variables: {
+ *      lines: // value for 'lines'
+ *   },
+ * });
+ */
+export function useCheckoutCreateMutation(baseOptions?: Apollo.MutationHookOptions<CheckoutCreateMutation, CheckoutCreateMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CheckoutCreateMutation, CheckoutCreateMutationVariables>(CheckoutCreateDocument, options);
+      }
+export type CheckoutCreateMutationHookResult = ReturnType<typeof useCheckoutCreateMutation>;
+export type CheckoutCreateMutationResult = Apollo.MutationResult<CheckoutCreateMutation>;
+export type CheckoutCreateMutationOptions = Apollo.BaseMutationOptions<CheckoutCreateMutation, CheckoutCreateMutationVariables>;
+export const CheckoutDeliveryMethodUpdateDocument = gql`
+    mutation CheckoutDeliveryMethodUpdate($id: ID, $token: UUID, $deliveryMethodId: ID) {
+  checkoutDeliveryMethodUpdate(
+    id: $id
+    token: $token
+    deliveryMethodId: $deliveryMethodId
+  ) {
+    checkout {
+      token
+      id
+      deliveryMethod {
+        __typename
+      }
+    }
+    errors {
+      message
+    }
+  }
+}
+    `;
+export type CheckoutDeliveryMethodUpdateMutationFn = Apollo.MutationFunction<CheckoutDeliveryMethodUpdateMutation, CheckoutDeliveryMethodUpdateMutationVariables>;
+
+/**
+ * __useCheckoutDeliveryMethodUpdateMutation__
+ *
+ * To run a mutation, you first call `useCheckoutDeliveryMethodUpdateMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCheckoutDeliveryMethodUpdateMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [checkoutDeliveryMethodUpdateMutation, { data, loading, error }] = useCheckoutDeliveryMethodUpdateMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *      token: // value for 'token'
+ *      deliveryMethodId: // value for 'deliveryMethodId'
+ *   },
+ * });
+ */
+export function useCheckoutDeliveryMethodUpdateMutation(baseOptions?: Apollo.MutationHookOptions<CheckoutDeliveryMethodUpdateMutation, CheckoutDeliveryMethodUpdateMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CheckoutDeliveryMethodUpdateMutation, CheckoutDeliveryMethodUpdateMutationVariables>(CheckoutDeliveryMethodUpdateDocument, options);
+      }
+export type CheckoutDeliveryMethodUpdateMutationHookResult = ReturnType<typeof useCheckoutDeliveryMethodUpdateMutation>;
+export type CheckoutDeliveryMethodUpdateMutationResult = Apollo.MutationResult<CheckoutDeliveryMethodUpdateMutation>;
+export type CheckoutDeliveryMethodUpdateMutationOptions = Apollo.BaseMutationOptions<CheckoutDeliveryMethodUpdateMutation, CheckoutDeliveryMethodUpdateMutationVariables>;
+export const CheckoutPayemntCreateDocument = gql`
+    mutation CheckoutPayemntCreate($checkouId: ID, $token: UUID, $input: PaymentInput!) {
+  checkoutPaymentCreate(checkoutId: $checkouId, token: $token, input: $input) {
+    checkout {
+      id
+    }
+    payment {
+      creditCard {
+        brand
+      }
+    }
+  }
+}
+    `;
+export type CheckoutPayemntCreateMutationFn = Apollo.MutationFunction<CheckoutPayemntCreateMutation, CheckoutPayemntCreateMutationVariables>;
+
+/**
+ * __useCheckoutPayemntCreateMutation__
+ *
+ * To run a mutation, you first call `useCheckoutPayemntCreateMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCheckoutPayemntCreateMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [checkoutPayemntCreateMutation, { data, loading, error }] = useCheckoutPayemntCreateMutation({
+ *   variables: {
+ *      checkouId: // value for 'checkouId'
+ *      token: // value for 'token'
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useCheckoutPayemntCreateMutation(baseOptions?: Apollo.MutationHookOptions<CheckoutPayemntCreateMutation, CheckoutPayemntCreateMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CheckoutPayemntCreateMutation, CheckoutPayemntCreateMutationVariables>(CheckoutPayemntCreateDocument, options);
+      }
+export type CheckoutPayemntCreateMutationHookResult = ReturnType<typeof useCheckoutPayemntCreateMutation>;
+export type CheckoutPayemntCreateMutationResult = Apollo.MutationResult<CheckoutPayemntCreateMutation>;
+export type CheckoutPayemntCreateMutationOptions = Apollo.BaseMutationOptions<CheckoutPayemntCreateMutation, CheckoutPayemntCreateMutationVariables>;
+export const CheckoutShippingAddressUpdateDocument = gql`
+    mutation CheckoutShippingAddressUpdate($checkoutId: ID, $id: ID, $shippingAddress: AddressInput!, $token: UUID) {
+  checkoutShippingAddressUpdate(
+    checkoutId: $checkoutId
+    id: $id
+    shippingAddress: $shippingAddress
+    token: $token
+  ) {
+    errors {
+      message
+    }
+    checkout {
+      shippingPrice {
+        gross {
+          currency
+          amount
+        }
+      }
+      id
+      shippingAddress {
+        firstName
+        streetAddress1
+        city
+        postalCode
+        country {
+          country
+          code
+        }
+      }
+    }
+  }
+}
+    `;
+export type CheckoutShippingAddressUpdateMutationFn = Apollo.MutationFunction<CheckoutShippingAddressUpdateMutation, CheckoutShippingAddressUpdateMutationVariables>;
+
+/**
+ * __useCheckoutShippingAddressUpdateMutation__
+ *
+ * To run a mutation, you first call `useCheckoutShippingAddressUpdateMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCheckoutShippingAddressUpdateMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [checkoutShippingAddressUpdateMutation, { data, loading, error }] = useCheckoutShippingAddressUpdateMutation({
+ *   variables: {
+ *      checkoutId: // value for 'checkoutId'
+ *      id: // value for 'id'
+ *      shippingAddress: // value for 'shippingAddress'
+ *      token: // value for 'token'
+ *   },
+ * });
+ */
+export function useCheckoutShippingAddressUpdateMutation(baseOptions?: Apollo.MutationHookOptions<CheckoutShippingAddressUpdateMutation, CheckoutShippingAddressUpdateMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CheckoutShippingAddressUpdateMutation, CheckoutShippingAddressUpdateMutationVariables>(CheckoutShippingAddressUpdateDocument, options);
+      }
+export type CheckoutShippingAddressUpdateMutationHookResult = ReturnType<typeof useCheckoutShippingAddressUpdateMutation>;
+export type CheckoutShippingAddressUpdateMutationResult = Apollo.MutationResult<CheckoutShippingAddressUpdateMutation>;
+export type CheckoutShippingAddressUpdateMutationOptions = Apollo.BaseMutationOptions<CheckoutShippingAddressUpdateMutation, CheckoutShippingAddressUpdateMutationVariables>;
 export const ProductListDocument = gql`
     query ProductList {
   products(first: 5, channel: "default-channel") {
@@ -25180,6 +25480,43 @@ export function useProductListLazyQuery(baseOptions?: Apollo.LazyQueryHookOption
 export type ProductListQueryHookResult = ReturnType<typeof useProductListQuery>;
 export type ProductListLazyQueryHookResult = ReturnType<typeof useProductListLazyQuery>;
 export type ProductListQueryResult = Apollo.QueryResult<ProductListQuery, ProductListQueryVariables>;
+export const ShippingMethodsFetchAllDocument = gql`
+    query ShippingMethodsFetchAll {
+  shop {
+    availableShippingMethods(channel: "default-channel") {
+      id
+      name
+    }
+  }
+}
+    `;
+
+/**
+ * __useShippingMethodsFetchAllQuery__
+ *
+ * To run a query within a React component, call `useShippingMethodsFetchAllQuery` and pass it any options that fit your needs.
+ * When your component renders, `useShippingMethodsFetchAllQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useShippingMethodsFetchAllQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useShippingMethodsFetchAllQuery(baseOptions?: Apollo.QueryHookOptions<ShippingMethodsFetchAllQuery, ShippingMethodsFetchAllQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<ShippingMethodsFetchAllQuery, ShippingMethodsFetchAllQueryVariables>(ShippingMethodsFetchAllDocument, options);
+      }
+export function useShippingMethodsFetchAllLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ShippingMethodsFetchAllQuery, ShippingMethodsFetchAllQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<ShippingMethodsFetchAllQuery, ShippingMethodsFetchAllQueryVariables>(ShippingMethodsFetchAllDocument, options);
+        }
+export type ShippingMethodsFetchAllQueryHookResult = ReturnType<typeof useShippingMethodsFetchAllQuery>;
+export type ShippingMethodsFetchAllLazyQueryHookResult = ReturnType<typeof useShippingMethodsFetchAllLazyQuery>;
+export type ShippingMethodsFetchAllQueryResult = Apollo.QueryResult<ShippingMethodsFetchAllQuery, ShippingMethodsFetchAllQueryVariables>;
 export type AccountAddressCreateKeySpecifier = ('accountErrors' | 'address' | 'errors' | 'user' | AccountAddressCreateKeySpecifier)[];
 export type AccountAddressCreateFieldPolicy = {
 	accountErrors?: FieldPolicy<any> | FieldReadFunction<any>,
