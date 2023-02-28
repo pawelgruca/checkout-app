@@ -1,0 +1,11 @@
+mutation CheckoutBillingAddressUpdate($checkoutId: ID, $id: ID, $billingAddress: AddressInput!, $token: UUID) {
+  checkoutBillingAddressUpdate(checkoutId: $checkoutId, id: $id, billingAddress: $billingAddress, token: $token) {
+    checkout {
+      id
+    }
+    errors {
+      field
+      message
+    }
+  }
+}

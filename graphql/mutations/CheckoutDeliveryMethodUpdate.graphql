@@ -3,6 +3,12 @@ mutation CheckoutDeliveryMethodUpdate($id: ID, $token: UUID, $deliveryMethodId: 
     checkout {
       token
       id
+      totalPrice {
+        gross {
+          currency
+          amount
+        }
+      }
       deliveryMethod {
         __typename
       }

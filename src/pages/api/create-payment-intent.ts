@@ -3,7 +3,7 @@ import Stripe from 'stripe';
 
 const STRIPE_KEY = process.env.STRIPE_SECRET_KEY || '';
 
-const stripe = new Stripe(STRIPE_KEY, {
+export const stripe = new Stripe(STRIPE_KEY, {
   apiVersion: '2022-11-15',
 });
 
@@ -18,10 +18,12 @@ type Data = {
 export default async function handler(req: NextApiRequest, res: NextApiResponse<Data>) {
   try {
     const paymentIntent = await stripe.paymentIntents.create({
-      currency: 'EUR',
+      currency: 'USD',
       amount: 1999,
       automatic_payment_methods: { enabled: true },
     });
+
+    console.log(paymentIntent.payment_method);
 
     if (!paymentIntent.client_secret) {
       return new Error('Something went wrong');
