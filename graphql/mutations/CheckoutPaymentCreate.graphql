@@ -1,18 +1,12 @@
-mutation CheckoutPayemntCreate($checkoutId: ID, $token: UUID, $input: PaymentInput!) {
+mutation CheckoutPaymntCreate($checkoutId: ID, $token: UUID, $input: PaymentInput!) {
   checkoutPaymentCreate(checkoutId: $checkoutId, token: $token, input: $input) {
-    checkout {
+    payment {
       id
+      chargeStatus
     }
     errors {
       field
       message
-    }
-    payment {
-      id
-      chargeStatus
-      creditCard {
-        brand
-      }
     }
   }
 }

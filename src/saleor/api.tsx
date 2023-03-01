@@ -25152,14 +25152,14 @@ export type CheckoutDeliveryMethodUpdateMutationVariables = Exact<{
 
 export type CheckoutDeliveryMethodUpdateMutation = { __typename?: 'Mutation', checkoutDeliveryMethodUpdate?: { __typename?: 'CheckoutDeliveryMethodUpdate', checkout?: { __typename?: 'Checkout', token: any, id: string, totalPrice: { __typename?: 'TaxedMoney', gross: { __typename?: 'Money', currency: string, amount: number } }, deliveryMethod?: { __typename: 'ShippingMethod' } | { __typename: 'Warehouse' } | null } | null, errors: Array<{ __typename?: 'CheckoutError', message?: string | null }> } | null };
 
-export type CheckoutPayemntCreateMutationVariables = Exact<{
+export type CheckoutPaymntCreateMutationVariables = Exact<{
   checkoutId?: InputMaybe<Scalars['ID']>;
   token?: InputMaybe<Scalars['UUID']>;
   input: PaymentInput;
 }>;
 
 
-export type CheckoutPayemntCreateMutation = { __typename?: 'Mutation', checkoutPaymentCreate?: { __typename?: 'CheckoutPaymentCreate', checkout?: { __typename?: 'Checkout', id: string } | null, errors: Array<{ __typename?: 'PaymentError', field?: string | null, message?: string | null }>, payment?: { __typename?: 'Payment', id: string, chargeStatus: PaymentChargeStatusEnum, creditCard?: { __typename?: 'CreditCard', brand: string } | null } | null } | null };
+export type CheckoutPaymntCreateMutation = { __typename?: 'Mutation', checkoutPaymentCreate?: { __typename?: 'CheckoutPaymentCreate', payment?: { __typename?: 'Payment', id: string, chargeStatus: PaymentChargeStatusEnum } | null, errors: Array<{ __typename?: 'PaymentError', field?: string | null, message?: string | null }> } | null };
 
 export type CheckoutShippingAddressUpdateMutationVariables = Exact<{
   checkoutId?: InputMaybe<Scalars['ID']>;
@@ -25385,40 +25385,34 @@ export function useCheckoutDeliveryMethodUpdateMutation(baseOptions?: Apollo.Mut
 export type CheckoutDeliveryMethodUpdateMutationHookResult = ReturnType<typeof useCheckoutDeliveryMethodUpdateMutation>;
 export type CheckoutDeliveryMethodUpdateMutationResult = Apollo.MutationResult<CheckoutDeliveryMethodUpdateMutation>;
 export type CheckoutDeliveryMethodUpdateMutationOptions = Apollo.BaseMutationOptions<CheckoutDeliveryMethodUpdateMutation, CheckoutDeliveryMethodUpdateMutationVariables>;
-export const CheckoutPayemntCreateDocument = gql`
-    mutation CheckoutPayemntCreate($checkoutId: ID, $token: UUID, $input: PaymentInput!) {
+export const CheckoutPaymntCreateDocument = gql`
+    mutation CheckoutPaymntCreate($checkoutId: ID, $token: UUID, $input: PaymentInput!) {
   checkoutPaymentCreate(checkoutId: $checkoutId, token: $token, input: $input) {
-    checkout {
+    payment {
       id
+      chargeStatus
     }
     errors {
       field
       message
     }
-    payment {
-      id
-      chargeStatus
-      creditCard {
-        brand
-      }
-    }
   }
 }
     `;
-export type CheckoutPayemntCreateMutationFn = Apollo.MutationFunction<CheckoutPayemntCreateMutation, CheckoutPayemntCreateMutationVariables>;
+export type CheckoutPaymntCreateMutationFn = Apollo.MutationFunction<CheckoutPaymntCreateMutation, CheckoutPaymntCreateMutationVariables>;
 
 /**
- * __useCheckoutPayemntCreateMutation__
+ * __useCheckoutPaymntCreateMutation__
  *
- * To run a mutation, you first call `useCheckoutPayemntCreateMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useCheckoutPayemntCreateMutation` returns a tuple that includes:
+ * To run a mutation, you first call `useCheckoutPaymntCreateMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCheckoutPaymntCreateMutation` returns a tuple that includes:
  * - A mutate function that you can call at any time to execute the mutation
  * - An object with fields that represent the current status of the mutation's execution
  *
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const [checkoutPayemntCreateMutation, { data, loading, error }] = useCheckoutPayemntCreateMutation({
+ * const [checkoutPaymntCreateMutation, { data, loading, error }] = useCheckoutPaymntCreateMutation({
  *   variables: {
  *      checkoutId: // value for 'checkoutId'
  *      token: // value for 'token'
@@ -25426,13 +25420,13 @@ export type CheckoutPayemntCreateMutationFn = Apollo.MutationFunction<CheckoutPa
  *   },
  * });
  */
-export function useCheckoutPayemntCreateMutation(baseOptions?: Apollo.MutationHookOptions<CheckoutPayemntCreateMutation, CheckoutPayemntCreateMutationVariables>) {
+export function useCheckoutPaymntCreateMutation(baseOptions?: Apollo.MutationHookOptions<CheckoutPaymntCreateMutation, CheckoutPaymntCreateMutationVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<CheckoutPayemntCreateMutation, CheckoutPayemntCreateMutationVariables>(CheckoutPayemntCreateDocument, options);
+        return Apollo.useMutation<CheckoutPaymntCreateMutation, CheckoutPaymntCreateMutationVariables>(CheckoutPaymntCreateDocument, options);
       }
-export type CheckoutPayemntCreateMutationHookResult = ReturnType<typeof useCheckoutPayemntCreateMutation>;
-export type CheckoutPayemntCreateMutationResult = Apollo.MutationResult<CheckoutPayemntCreateMutation>;
-export type CheckoutPayemntCreateMutationOptions = Apollo.BaseMutationOptions<CheckoutPayemntCreateMutation, CheckoutPayemntCreateMutationVariables>;
+export type CheckoutPaymntCreateMutationHookResult = ReturnType<typeof useCheckoutPaymntCreateMutation>;
+export type CheckoutPaymntCreateMutationResult = Apollo.MutationResult<CheckoutPaymntCreateMutation>;
+export type CheckoutPaymntCreateMutationOptions = Apollo.BaseMutationOptions<CheckoutPaymntCreateMutation, CheckoutPaymntCreateMutationVariables>;
 export const CheckoutShippingAddressUpdateDocument = gql`
     mutation CheckoutShippingAddressUpdate($checkoutId: ID, $id: ID, $shippingAddress: AddressInput!, $token: UUID) {
   checkoutShippingAddressUpdate(

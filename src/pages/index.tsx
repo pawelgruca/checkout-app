@@ -5,15 +5,12 @@ import {
   useCheckoutCompleteMutation,
   useCheckoutCreateMutation,
   useCheckoutDeliveryMethodUpdateMutation,
-  useCheckoutPayemntCreateMutation,
+  useCheckoutPaymntCreateMutation,
   useCheckoutShippingAddressUpdateMutation,
   useProductListQuery,
 } from '@/saleor/api';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useRouter } from 'next/router';
-import { useStripe } from '@stripe/react-stripe-js';
-
-import { loadStripe, Stripe } from '@stripe/stripe-js';
 
 const addressExample: AddressInput = {
   firstName: 'test',
@@ -23,21 +20,17 @@ const addressExample: AddressInput = {
   country: 'PL',
 };
 
-export default function Home(props) {
+export default function Home() {
   const [selectedProducts, setSelectedProducts] = useState<CheckoutLineInput[]>();
   const router = useRouter();
-  const [clientSecret, setClientSecret] = useState('');
-  const [peymentIntentId, setPeymentIntentId] = useState('');
-  const [stripePromise, setStripePromise] = useState<Promise<Stripe | null>>();
 
   const { data } = useProductListQuery();
   const [checkoutCreate] = useCheckoutCreateMutation();
   const [checkoutDeliveryMethodUpdate] = useCheckoutDeliveryMethodUpdateMutation();
   const [checkoutShippingAddressUpdate] = useCheckoutShippingAddressUpdateMutation();
   const [checkoutBillingAddressUpdate] = useCheckoutBillingAddressUpdateMutation();
-  const [checkoutPaymentCreate] = useCheckoutPayemntCreateMutation();
+  const [checkoutPaymentCreate] = useCheckoutPaymntCreateMutation();
   const [checkoutComplete] = useCheckoutCompleteMutation();
-  const stripe = useStripe();
 
   const products = data?.products?.edges.map(({ node }) => ({
     name: node.name,
@@ -65,9 +58,11 @@ export default function Home(props) {
     if (!selectedProducts?.length) {
       return;
     }
+
     const checkoutCreateResult = await checkoutCreate({ variables: { lines: selectedProducts } });
 
     const token = checkoutCreateResult.data?.checkoutCreate?.checkout?.token;
+    const checkoutId = checkoutCreateResult.data?.checkoutCreate?.checkout?.id;
 
     const checkoutShippingAddressUpdateResult = await checkoutShippingAddressUpdate({
       variables: {
@@ -95,7 +90,6 @@ export default function Home(props) {
       return;
     }
 
-    const checkoutId = checkoutCreateResult.data?.checkoutCreate?.checkout?.id;
     const totalPrice =
       checkoutDeliveryMethodUpdateResult.data?.checkoutDeliveryMethodUpdate?.checkout?.totalPrice.gross.amount;
 
@@ -115,6 +109,8 @@ export default function Home(props) {
       },
     });
 
+    console.log(checkoutCompleteResult);
+
     const clientSecret = JSON.parse(
       checkoutCompleteResult.data?.checkoutComplete?.confirmationData || ''
     ).client_secret;
@@ -123,7 +119,7 @@ export default function Home(props) {
       return;
     }
 
-    router.replace(`payment/?checkoutId=${checkoutId}&?clientSecret=${clientSecret}`);
+    router.replace(`/payment/${clientSecret}`);
   };
 
   return (
