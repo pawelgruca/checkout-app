@@ -25131,6 +25131,7 @@ export type CheckoutBillingAddressUpdateMutation = { __typename?: 'Mutation', ch
 
 export type CheckoutCompleteMutationVariables = Exact<{
   checkoutId?: InputMaybe<Scalars['ID']>;
+  paymentData?: InputMaybe<Scalars['JSONString']>;
 }>;
 
 
@@ -25170,6 +25171,14 @@ export type CheckoutShippingAddressUpdateMutationVariables = Exact<{
 
 
 export type CheckoutShippingAddressUpdateMutation = { __typename?: 'Mutation', checkoutShippingAddressUpdate?: { __typename?: 'CheckoutShippingAddressUpdate', errors: Array<{ __typename?: 'CheckoutError', message?: string | null }>, checkout?: { __typename?: 'Checkout', id: string, shippingPrice: { __typename?: 'TaxedMoney', gross: { __typename?: 'Money', currency: string, amount: number } }, shippingAddress?: { __typename?: 'Address', firstName: string, streetAddress1: string, city: string, postalCode: string, country: { __typename?: 'CountryDisplay', country: string, code: string } } | null } | null } | null };
+
+export type CheckoutQueryVariables = Exact<{
+  id?: InputMaybe<Scalars['ID']>;
+  token?: InputMaybe<Scalars['UUID']>;
+}>;
+
+
+export type CheckoutQuery = { __typename?: 'Query', checkout?: { __typename?: 'Checkout', lines: Array<{ __typename?: 'CheckoutLine', variant: { __typename?: 'ProductVariant', name: string, metadata: Array<{ __typename?: 'MetadataItem', key: string, value: string }>, product: { __typename?: 'Product', name: string, description?: string | null }, pricing?: { __typename?: 'VariantPricingInfo', price?: { __typename?: 'TaxedMoney', gross: { __typename?: 'Money', currency: string, amount: number } } | null } | null }, metadata: Array<{ __typename?: 'MetadataItem', key: string, value: string }>, totalPrice: { __typename?: 'TaxedMoney', gross: { __typename?: 'Money', amount: number, currency: string } } }> } | null };
 
 export type ProductListQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -25230,8 +25239,8 @@ export type CheckoutBillingAddressUpdateMutationHookResult = ReturnType<typeof u
 export type CheckoutBillingAddressUpdateMutationResult = Apollo.MutationResult<CheckoutBillingAddressUpdateMutation>;
 export type CheckoutBillingAddressUpdateMutationOptions = Apollo.BaseMutationOptions<CheckoutBillingAddressUpdateMutation, CheckoutBillingAddressUpdateMutationVariables>;
 export const CheckoutCompleteDocument = gql`
-    mutation checkoutComplete($checkoutId: ID) {
-  checkoutComplete(checkoutId: $checkoutId) {
+    mutation checkoutComplete($checkoutId: ID, $paymentData: JSONString) {
+  checkoutComplete(checkoutId: $checkoutId, paymentData: $paymentData) {
     order {
       id
       userEmail
@@ -25263,6 +25272,7 @@ export type CheckoutCompleteMutationFn = Apollo.MutationFunction<CheckoutComplet
  * const [checkoutCompleteMutation, { data, loading, error }] = useCheckoutCompleteMutation({
  *   variables: {
  *      checkoutId: // value for 'checkoutId'
+ *      paymentData: // value for 'paymentData'
  *   },
  * });
  */
@@ -25489,6 +25499,72 @@ export function useCheckoutShippingAddressUpdateMutation(baseOptions?: Apollo.Mu
 export type CheckoutShippingAddressUpdateMutationHookResult = ReturnType<typeof useCheckoutShippingAddressUpdateMutation>;
 export type CheckoutShippingAddressUpdateMutationResult = Apollo.MutationResult<CheckoutShippingAddressUpdateMutation>;
 export type CheckoutShippingAddressUpdateMutationOptions = Apollo.BaseMutationOptions<CheckoutShippingAddressUpdateMutation, CheckoutShippingAddressUpdateMutationVariables>;
+export const CheckoutDocument = gql`
+    query Checkout($id: ID, $token: UUID) {
+  checkout(id: $id, token: $token) {
+    lines {
+      variant {
+        metadata {
+          key
+          value
+        }
+        name
+        product {
+          name
+          description
+        }
+        pricing {
+          price {
+            gross {
+              currency
+              amount
+            }
+          }
+        }
+      }
+      metadata {
+        key
+        value
+      }
+      totalPrice {
+        gross {
+          amount
+          currency
+        }
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useCheckoutQuery__
+ *
+ * To run a query within a React component, call `useCheckoutQuery` and pass it any options that fit your needs.
+ * When your component renders, `useCheckoutQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useCheckoutQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *      token: // value for 'token'
+ *   },
+ * });
+ */
+export function useCheckoutQuery(baseOptions?: Apollo.QueryHookOptions<CheckoutQuery, CheckoutQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<CheckoutQuery, CheckoutQueryVariables>(CheckoutDocument, options);
+      }
+export function useCheckoutLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<CheckoutQuery, CheckoutQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<CheckoutQuery, CheckoutQueryVariables>(CheckoutDocument, options);
+        }
+export type CheckoutQueryHookResult = ReturnType<typeof useCheckoutQuery>;
+export type CheckoutLazyQueryHookResult = ReturnType<typeof useCheckoutLazyQuery>;
+export type CheckoutQueryResult = Apollo.QueryResult<CheckoutQuery, CheckoutQueryVariables>;
 export const ProductListDocument = gql`
     query ProductList {
   products(first: 5, channel: "default-channel") {

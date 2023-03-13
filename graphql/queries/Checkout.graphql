@@ -1,0 +1,35 @@
+query Checkout($id: ID, $token: UUID) {
+  checkout(id: $id, token: $token) {
+    lines {
+      variant {
+        metadata {
+          key
+          value
+        }
+        name
+        product {
+          name
+          description
+        }
+        pricing {
+          price {
+            gross {
+              currency
+              amount
+            }
+          }
+        }
+      }
+      metadata {
+        key
+        value
+      }
+      totalPrice {
+        gross {
+          amount
+          currency
+        }
+      }
+    }
+  }
+}

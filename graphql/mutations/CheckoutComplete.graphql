@@ -1,10 +1,31 @@
-mutation checkoutComplete($checkoutId: ID) {
-  checkoutComplete(checkoutId: $checkoutId) {
+mutation checkoutComplete($checkoutId: ID, $paymentData: JSONString) {
+  checkoutComplete(checkoutId: $checkoutId, paymentData: $paymentData) {
     order {
+      channel {
+        id
+        slug
+        name
+        currencyCode
+        defaultCountry {
+          code
+          country
+        }
+      }
       id
       userEmail
       created
+
+      user {
+        orders {
+          totalCount
+        }
+      }
+      metadata {
+        key
+        value
+      }
     }
+
     confirmationNeeded
     confirmationData
     errors {

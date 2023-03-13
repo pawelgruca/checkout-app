@@ -1,16 +1,18 @@
+import AddressForm from '@/components/AddressForm';
+
+import Payment from '@/components/Payment';
+import { useCookie } from '@/hooks/useCookie';
 import {
   AddressInput,
-  CheckoutLineInput,
   useCheckoutBillingAddressUpdateMutation,
   useCheckoutCompleteMutation,
-  useCheckoutCreateMutation,
   useCheckoutDeliveryMethodUpdateMutation,
   useCheckoutPaymntCreateMutation,
+  useCheckoutQuery,
   useCheckoutShippingAddressUpdateMutation,
-  useProductListQuery,
 } from '@/saleor/api';
-import { useState } from 'react';
-import { useRouter } from 'next/router';
+
+import { useEffect, useState } from 'react';
 
 const addressExample: AddressInput = {
   firstName: 'test',
@@ -20,131 +22,106 @@ const addressExample: AddressInput = {
   country: 'PL',
 };
 
-export default function Home() {
-  const [selectedProducts, setSelectedProducts] = useState<CheckoutLineInput[]>();
-  const router = useRouter();
-
-  const { data } = useProductListQuery();
-  const [checkoutCreate] = useCheckoutCreateMutation();
+const Checkout = () => {
   const [checkoutDeliveryMethodUpdate] = useCheckoutDeliveryMethodUpdateMutation();
   const [checkoutShippingAddressUpdate] = useCheckoutShippingAddressUpdateMutation();
   const [checkoutBillingAddressUpdate] = useCheckoutBillingAddressUpdateMutation();
   const [checkoutPaymentCreate] = useCheckoutPaymntCreateMutation();
   const [checkoutComplete] = useCheckoutCompleteMutation();
+  const [showShippingAddress, setShowShippingAddress] = useState(false);
 
-  const products = data?.products?.edges.map(({ node }) => ({
-    name: node.name,
-    variants: node.variants,
-    thumbnail: node.thumbnail,
-  }));
+  const token = useCookie('checkout_token');
+  const checkoutId = useCookie('checkout_id');
 
-  const handleOnProductClick = ({ variantId, price }: { variantId: string; price?: number }) => {
-    if (!price) {
+  const { data } = useCheckoutQuery({
+    variables: {
+      id: checkoutId,
+    },
+  });
+
+  const [clientSecret, setClientSecret] = useState('');
+
+  useEffect(() => {
+    if (!token || !checkoutId) {
       return;
     }
 
-    setSelectedProducts((prev) => {
-      const selectedProduct = { variantId, quantity: 1 };
+    (async () => {
+      const checkoutShippingAddressUpdateResult = await checkoutShippingAddressUpdate({
+        variables: {
+          token,
+          shippingAddress: addressExample,
+        },
+      });
 
-      if (!prev?.length) {
-        return [selectedProduct];
+      const checkoutBillingAddressUpdateResult = await checkoutBillingAddressUpdate({
+        variables: {
+          token,
+          billingAddress: addressExample,
+        },
+      });
+
+      const checkoutDeliveryMethodUpdateResult = await checkoutDeliveryMethodUpdate({
+        variables: {
+          deliveryMethodId: 'U2hpcHBpbmdNZXRob2Q6Mg==',
+          token,
+        },
+      });
+
+      if (checkoutDeliveryMethodUpdateResult.errors) {
+        return;
       }
 
-      return [...prev, selectedProduct];
-    });
-  };
+      const totalPrice =
+        checkoutDeliveryMethodUpdateResult.data?.checkoutDeliveryMethodUpdate?.checkout?.totalPrice.gross.amount;
 
-  const handleCreateCheckout = async () => {
-    if (!selectedProducts?.length) {
-      return;
-    }
-
-    const checkoutCreateResult = await checkoutCreate({ variables: { lines: selectedProducts } });
-
-    const token = checkoutCreateResult.data?.checkoutCreate?.checkout?.token;
-    const checkoutId = checkoutCreateResult.data?.checkoutCreate?.checkout?.id;
-
-    const checkoutShippingAddressUpdateResult = await checkoutShippingAddressUpdate({
-      variables: {
-        token,
-        shippingAddress: addressExample,
-      },
-    });
-
-    const checkoutBillingAddressUpdateResult = await checkoutBillingAddressUpdate({
-      variables: {
-        token,
-        billingAddress: addressExample,
-      },
-    });
-
-    const checkoutDeliveryMethodUpdateResult = await checkoutDeliveryMethodUpdate({
-      variables: {
-        deliveryMethodId: 'U2hpcHBpbmdNZXRob2Q6Mg==',
-
-        token,
-      },
-    });
-
-    if (checkoutDeliveryMethodUpdateResult.errors) {
-      return;
-    }
-
-    const totalPrice =
-      checkoutDeliveryMethodUpdateResult.data?.checkoutDeliveryMethodUpdate?.checkout?.totalPrice.gross.amount;
-
-    const checkoutPaymentCreateResult = await checkoutPaymentCreate({
-      variables: {
-        checkoutId,
-        input: {
-          gateway: 'saleor.payments.stripe',
-          amount: totalPrice,
+      const checkoutPaymentCreateResult = await checkoutPaymentCreate({
+        variables: {
+          token,
+          input: {
+            gateway: 'saleor.payments.stripe',
+            amount: totalPrice,
+          },
         },
-      },
-    });
+      });
 
-    const checkoutCompleteResult = await checkoutComplete({
-      variables: {
-        checkoutId,
-      },
-    });
+      const checkoutCompleteResult = await checkoutComplete({
+        variables: {
+          checkoutId,
+          paymentData: JSON.stringify({
+            payment_method_types: ['card'],
+          }),
+        },
+      });
 
-    console.log(checkoutCompleteResult);
+      const clientSecret = JSON.parse(
+        checkoutCompleteResult.data?.checkoutComplete?.confirmationData || ''
+      ).client_secret;
 
-    const clientSecret = JSON.parse(
-      checkoutCompleteResult.data?.checkoutComplete?.confirmationData || ''
-    ).client_secret;
+      if (clientSecret) {
+        setClientSecret(clientSecret);
+      }
+    })();
+  }, [token, checkoutId]);
 
-    if (!clientSecret) {
-      return;
-    }
+  if (token) {
+    return (
+      <div style={{ display: 'flex', flexDirection: 'column' }}>
+        {data?.checkout?.lines.map((line) => (
+          <h2>
+            {line.variant.product.name} {line.variant.pricing?.price?.gross.amount}
+          </h2>
+        ))}
+        <div style={{ display: 'flex', gap: '50px', width: '100%' }}>
+          <AddressForm title="Billing address" />
+          <AddressForm title="Shipping address" />
+        </div>
+        {clientSecret ? <Payment clientSecret={clientSecret} /> : null}
+      </div>
+    );
+  }
 
-    router.replace(`/payment/${clientSecret}`);
-  };
+  return <div>No token found</div>;
+};
 
-  return (
-    <>
-      <ul>
-        {products
-          ? products.map((product) => (
-              <li key={product.name}>
-                <h4>{product.name}</h4>
-                {product.variants?.map((variant) => (
-                  <p
-                    onClick={() =>
-                      handleOnProductClick({ variantId: variant.id, price: variant.pricing?.price?.gross.amount })
-                    }
-                  >
-                    {variant.id} {variant.pricing?.price?.gross.amount}
-                  </p>
-                ))}
-              </li>
-            ))
-          : null}
-      </ul>
-      <button disabled={!selectedProducts?.length} onClick={handleCreateCheckout}>
-        Create checkout
-      </button>
-    </>
-  );
-}
+export default Checkout;

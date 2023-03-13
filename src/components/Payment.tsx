@@ -6,10 +6,11 @@ import { loadStripe, Stripe } from '@stripe/stripe-js';
 import CheckoutForm from '@/components/CheckoutForm';
 import { useRouter } from 'next/router';
 
-function Payment() {
-  const router = useRouter();
+interface PaymentProps {
+  clientSecret: string;
+}
 
-  const clientSecret = router.query?.secret as string;
+const Payment: React.FC<PaymentProps> = ({ clientSecret }) => {
   const [stripePromise, setStripePromise] = useState<Promise<Stripe | null>>();
 
   useEffect(() => {
@@ -30,6 +31,6 @@ function Payment() {
       )}
     </>
   );
-}
+};
 
 export default Payment;

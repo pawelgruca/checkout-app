@@ -19,16 +19,17 @@ export default function CheckoutForm() {
     setIsProcessing(true);
 
     const { error } = await stripe.confirmPayment({
+      redirect: 'if_required',
       elements,
       confirmParams: {
         return_url: `${window.location.origin}/success`,
       },
     });
 
-    if (error.type === 'card_error' || error.type === 'validation_error') {
+    if (error?.type === 'card_error' || error?.type === 'validation_error') {
       setMessage(error.message);
     } else {
-      setMessage('An unexpected error occured.');
+      setMessage('Payment completed.');
     }
 
     setIsProcessing(false);
@@ -37,7 +38,18 @@ export default function CheckoutForm() {
   return (
     <form id="payment-form" onSubmit={handleSubmit} style={{ width: '400px' }}>
       <PaymentElement id="payment-element" />
-      <button disabled={isProcessing || !stripe || !elements} id="submit">
+      <button
+        disabled={isProcessing || !stripe || !elements}
+        id="submit"
+        style={{
+          width: '100%',
+          color: 'white',
+          background: 'black',
+          border: 'none',
+          paddingBlock: '10px',
+          marginTop: '20px',
+        }}
+      >
         <span id="button-text">{isProcessing ? 'Processing ... ' : 'Pay now'}</span>
       </button>
 
