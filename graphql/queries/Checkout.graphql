@@ -1,5 +1,13 @@
 query Checkout($id: ID, $token: UUID) {
   checkout(id: $id, token: $token) {
+    shippingMethods {
+      id
+      name
+      price {
+        currency
+        amount
+      }
+    }
     lines {
       variant {
         metadata {

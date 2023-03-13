@@ -25119,6 +25119,15 @@ export type _Service = {
   sdl?: Maybe<Scalars['String']>;
 };
 
+export type CheckoutAddPromoCodeMutationVariables = Exact<{
+  checkoutId?: InputMaybe<Scalars['ID']>;
+  token?: InputMaybe<Scalars['UUID']>;
+  promoCode: Scalars['String'];
+}>;
+
+
+export type CheckoutAddPromoCodeMutation = { __typename?: 'Mutation', checkoutAddPromoCode?: { __typename?: 'CheckoutAddPromoCode', checkout?: { __typename?: 'Checkout', totalPrice: { __typename?: 'TaxedMoney', currency: string, gross: { __typename?: 'Money', currency: string, amount: number } }, discount?: { __typename?: 'Money', currency: string, amount: number } | null } | null, errors: Array<{ __typename?: 'CheckoutError', field?: string | null, message?: string | null }> } | null };
+
 export type CheckoutBillingAddressUpdateMutationVariables = Exact<{
   checkoutId?: InputMaybe<Scalars['ID']>;
   id?: InputMaybe<Scalars['ID']>;
@@ -25135,7 +25144,7 @@ export type CheckoutCompleteMutationVariables = Exact<{
 }>;
 
 
-export type CheckoutCompleteMutation = { __typename?: 'Mutation', checkoutComplete?: { __typename?: 'CheckoutComplete', confirmationNeeded: boolean, confirmationData?: string | null, order?: { __typename?: 'Order', id: string, userEmail?: string | null, created: any } | null, errors: Array<{ __typename?: 'CheckoutError', field?: string | null, message?: string | null, code: CheckoutErrorCode }> } | null };
+export type CheckoutCompleteMutation = { __typename?: 'Mutation', checkoutComplete?: { __typename?: 'CheckoutComplete', confirmationNeeded: boolean, confirmationData?: string | null, order?: { __typename?: 'Order', id: string, userEmail?: string | null, created: any, channel: { __typename?: 'Channel', id: string, slug: string, name: string, currencyCode: string, defaultCountry: { __typename?: 'CountryDisplay', code: string, country: string } }, user?: { __typename?: 'User', orders?: { __typename?: 'OrderCountableConnection', totalCount?: number | null } | null } | null, metadata: Array<{ __typename?: 'MetadataItem', key: string, value: string }> } | null, errors: Array<{ __typename?: 'CheckoutError', field?: string | null, message?: string | null, code: CheckoutErrorCode }> } | null };
 
 export type CheckoutCreateMutationVariables = Exact<{
   lines: Array<CheckoutLineInput> | CheckoutLineInput;
@@ -25178,7 +25187,7 @@ export type CheckoutQueryVariables = Exact<{
 }>;
 
 
-export type CheckoutQuery = { __typename?: 'Query', checkout?: { __typename?: 'Checkout', lines: Array<{ __typename?: 'CheckoutLine', variant: { __typename?: 'ProductVariant', name: string, metadata: Array<{ __typename?: 'MetadataItem', key: string, value: string }>, product: { __typename?: 'Product', name: string, description?: string | null }, pricing?: { __typename?: 'VariantPricingInfo', price?: { __typename?: 'TaxedMoney', gross: { __typename?: 'Money', currency: string, amount: number } } | null } | null }, metadata: Array<{ __typename?: 'MetadataItem', key: string, value: string }>, totalPrice: { __typename?: 'TaxedMoney', gross: { __typename?: 'Money', amount: number, currency: string } } }> } | null };
+export type CheckoutQuery = { __typename?: 'Query', checkout?: { __typename?: 'Checkout', shippingMethods: Array<{ __typename?: 'ShippingMethod', id: string, name: string, price: { __typename?: 'Money', currency: string, amount: number } }>, lines: Array<{ __typename?: 'CheckoutLine', variant: { __typename?: 'ProductVariant', name: string, metadata: Array<{ __typename?: 'MetadataItem', key: string, value: string }>, product: { __typename?: 'Product', name: string, description?: string | null }, pricing?: { __typename?: 'VariantPricingInfo', price?: { __typename?: 'TaxedMoney', gross: { __typename?: 'Money', currency: string, amount: number } } | null } | null }, metadata: Array<{ __typename?: 'MetadataItem', key: string, value: string }>, totalPrice: { __typename?: 'TaxedMoney', gross: { __typename?: 'Money', amount: number, currency: string } } }> } | null };
 
 export type ProductListQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -25191,6 +25200,61 @@ export type ShippingMethodsFetchAllQueryVariables = Exact<{ [key: string]: never
 export type ShippingMethodsFetchAllQuery = { __typename?: 'Query', shop: { __typename?: 'Shop', availableShippingMethods?: Array<{ __typename?: 'ShippingMethod', id: string, name: string }> | null } };
 
 
+export const CheckoutAddPromoCodeDocument = gql`
+    mutation CheckoutAddPromoCode($checkoutId: ID, $token: UUID, $promoCode: String!) {
+  checkoutAddPromoCode(
+    checkoutId: $checkoutId
+    token: $token
+    promoCode: $promoCode
+  ) {
+    checkout {
+      totalPrice {
+        currency
+        gross {
+          currency
+          amount
+        }
+      }
+      discount {
+        currency
+        amount
+      }
+    }
+    errors {
+      field
+      message
+    }
+  }
+}
+    `;
+export type CheckoutAddPromoCodeMutationFn = Apollo.MutationFunction<CheckoutAddPromoCodeMutation, CheckoutAddPromoCodeMutationVariables>;
+
+/**
+ * __useCheckoutAddPromoCodeMutation__
+ *
+ * To run a mutation, you first call `useCheckoutAddPromoCodeMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCheckoutAddPromoCodeMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [checkoutAddPromoCodeMutation, { data, loading, error }] = useCheckoutAddPromoCodeMutation({
+ *   variables: {
+ *      checkoutId: // value for 'checkoutId'
+ *      token: // value for 'token'
+ *      promoCode: // value for 'promoCode'
+ *   },
+ * });
+ */
+export function useCheckoutAddPromoCodeMutation(baseOptions?: Apollo.MutationHookOptions<CheckoutAddPromoCodeMutation, CheckoutAddPromoCodeMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CheckoutAddPromoCodeMutation, CheckoutAddPromoCodeMutationVariables>(CheckoutAddPromoCodeDocument, options);
+      }
+export type CheckoutAddPromoCodeMutationHookResult = ReturnType<typeof useCheckoutAddPromoCodeMutation>;
+export type CheckoutAddPromoCodeMutationResult = Apollo.MutationResult<CheckoutAddPromoCodeMutation>;
+export type CheckoutAddPromoCodeMutationOptions = Apollo.BaseMutationOptions<CheckoutAddPromoCodeMutation, CheckoutAddPromoCodeMutationVariables>;
 export const CheckoutBillingAddressUpdateDocument = gql`
     mutation CheckoutBillingAddressUpdate($checkoutId: ID, $id: ID, $billingAddress: AddressInput!, $token: UUID) {
   checkoutBillingAddressUpdate(
@@ -25242,9 +25306,28 @@ export const CheckoutCompleteDocument = gql`
     mutation checkoutComplete($checkoutId: ID, $paymentData: JSONString) {
   checkoutComplete(checkoutId: $checkoutId, paymentData: $paymentData) {
     order {
+      channel {
+        id
+        slug
+        name
+        currencyCode
+        defaultCountry {
+          code
+          country
+        }
+      }
       id
       userEmail
       created
+      user {
+        orders {
+          totalCount
+        }
+      }
+      metadata {
+        key
+        value
+      }
     }
     confirmationNeeded
     confirmationData
@@ -25502,6 +25585,14 @@ export type CheckoutShippingAddressUpdateMutationOptions = Apollo.BaseMutationOp
 export const CheckoutDocument = gql`
     query Checkout($id: ID, $token: UUID) {
   checkout(id: $id, token: $token) {
+    shippingMethods {
+      id
+      name
+      price {
+        currency
+        amount
+      }
+    }
     lines {
       variant {
         metadata {

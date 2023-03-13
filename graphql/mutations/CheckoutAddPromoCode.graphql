@@ -1,0 +1,21 @@
+mutation CheckoutAddPromoCode($checkoutId: ID, $token: UUID, $promoCode: String!) {
+  checkoutAddPromoCode(checkoutId: $checkoutId, token: $token, promoCode: $promoCode) {
+    checkout {
+      totalPrice {
+        currency
+        gross {
+          currency
+          amount
+        }
+      }
+      discount {
+        currency
+        amount
+      }
+    }
+    errors {
+      field
+      message
+    }
+  }
+}

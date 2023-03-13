@@ -8,9 +8,10 @@ import { useRouter } from 'next/router';
 
 interface PaymentProps {
   clientSecret: string;
+  cb: () => void;
 }
 
-const Payment: React.FC<PaymentProps> = ({ clientSecret }) => {
+const Payment: React.FC<PaymentProps> = ({ clientSecret, cb }) => {
   const [stripePromise, setStripePromise] = useState<Promise<Stripe | null>>();
 
   useEffect(() => {
@@ -26,7 +27,7 @@ const Payment: React.FC<PaymentProps> = ({ clientSecret }) => {
       {clientSecret && stripePromise && (
         <Elements stripe={stripePromise} options={{ clientSecret }}>
           <h1>Payment Element</h1>
-          <CheckoutForm />
+          <CheckoutForm cb={cb} />
         </Elements>
       )}
     </>

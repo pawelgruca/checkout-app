@@ -2,7 +2,11 @@ import { PaymentElement } from '@stripe/react-stripe-js';
 import { FormEvent, useState } from 'react';
 import { useStripe, useElements } from '@stripe/react-stripe-js';
 
-export default function CheckoutForm() {
+interface CheckoutFormProps {
+  cb?: () => void;
+}
+
+const CheckoutForm: React.FC<CheckoutFormProps> = ({ cb }) => {
   const stripe = useStripe();
   const elements = useElements();
 
@@ -30,6 +34,7 @@ export default function CheckoutForm() {
       setMessage(error.message);
     } else {
       setMessage('Payment completed.');
+      cb && cb();
     }
 
     setIsProcessing(false);
@@ -56,4 +61,6 @@ export default function CheckoutForm() {
       {message && <div id="payment-message">{message}</div>}
     </form>
   );
-}
+};
+
+export default CheckoutForm;
